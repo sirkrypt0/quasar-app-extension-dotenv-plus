@@ -21,5 +21,14 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0"
-  }
+  },
+  "keywords":[
+    "quasar",
+    "app",
+    "app extension",
+    "extension",
+    "dotenv",
+    "env",
+    "dotenv plus"
+  ],
 }
