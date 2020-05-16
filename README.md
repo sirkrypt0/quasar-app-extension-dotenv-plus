@@ -48,6 +48,3 @@ MY_SECOND_KEY=
 ```
 This config results in the plugin looking for `MY_FIRST_KEY` and `MY_SECOND_KEY` in the system environment and loading
 those. If any value is found, it will override the values set in any other `.env` file you specified before.
-
-# Donate
-If you appreciate the work that went into this App Extension, please consider [donating to Quasar](https://donate.quasar.dev).
