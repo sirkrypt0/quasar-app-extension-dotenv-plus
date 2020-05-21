@@ -6,63 +6,47 @@
  * API: https://github.com/quasarframework/quasar/blob/master/app/lib/app-extension/IndexAPI.js
  */
 
+
 const fs = require('fs')
 
-const extendConf = function (api, conf) {
-  const encoding = 'utf8'
-  let target = conf.build.env
-  const { config, parse } = require('dotenv')
-
-  // Load each file declared in env_files into environment
-	for(const fileName of api.prompts.env_files.split(' ')) {
-    // see if there is anything to do
-    if (fileName === void 0 || fileName === '') {
-      continue
-    }
-
-    // resolve the path to the file
-    const envPath = api.resolve.app(fileName)
-
-    if (!fs.existsSync(envPath)) {
-      console.log(`App Extension (dotenv-plus): '${fileName}' file missing; skipping`)
-      continue
-    }
-    // dotenv options
-    const envOptions = {
-      encoding: encoding,
-      path: envPath
-    }
-    const result = config(envOptions)
-    // check for dotenv error
-    if (result.error) {
-      console.error(`App Extension (dotenv-plus): Error '${result.error}'`)
-      process.exit(1)
-    }
-
-    const parsed = result.parsed
-    for (const key in parsed) {
-      target[key] = JSON.stringify(parsed[key])
-    }
-  }
-  // Load env vars declared in env_ci file from system environment
+const loadEnv = function(envPath, target, fromProcEnv){
   try {
-    const envPath = api.resolve.app(api.prompts.env_ci)
+    // see if there is anything to do
+    const encoding = 'utf8'
+    const {parse} = require('dotenv')
+
     if (!fs.existsSync(envPath)) {
-      console.log(`App Extension (dotenv-plus): '${api.prompts.env_ci}' file missing; skipping`)
+      console.log(`App Extension (dotenv-plus): '${envPath}' file missing; skipping`)
       return
     }
+
     const parsed = parse(fs.readFileSync(envPath, { encoding }))
 
+    let loadFrom = fromProcEnv ? process.env : parsed
+
     for (const key in parsed) {
-      if (Object.prototype.hasOwnProperty.call(process.env, key)) {
-        target[key] = JSON.stringify(process.env[key])
+      if (Object.prototype.hasOwnProperty.call(loadFrom, key)) {
+          target[key] = JSON.stringify(loadFrom[key])
       }
     }
   } catch (e) {
     console.error(`App Extension (dotenv-plus): Error '${e}'`)
     process.exit(1)
   }
+}
 
+const extendConf = function (api, conf) {
+  let target = conf.build.env
+
+  // Load each file declared in env_files into environment
+	for(const fileName of api.prompts.env_files.split(' ')) {
+	  if (fileName === void 0 || fileName === '') {
+      continue
+    }
+    loadEnv(api.resolve.app(fileName), target, false)
+  }
+  // Load env vars declared in env_ci file from system environment
+  loadEnv(api.resolve.app(api.prompts.env_ci), target, true)
 }
 
 module.exports = function (api) {
