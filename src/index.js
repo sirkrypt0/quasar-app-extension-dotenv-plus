@@ -26,7 +26,7 @@ const loadEnv = function(envPath, target, fromProcEnv){
 
     for (const key in parsed) {
       if (Object.prototype.hasOwnProperty.call(loadFrom, key)) {
-          target[key] = JSON.stringify(loadFrom[key])
+          target[key] = loadFrom[key]
       }
     }
   } catch (e) {
@@ -39,8 +39,8 @@ const extendConf = function (api, conf) {
   let target = conf.build.env
 
   // Load each file declared in env_files into environment
-	for(const fileName of api.prompts.env_files.split(' ')) {
-	  if (fileName === void 0 || fileName === '') {
+  for(const fileName of api.prompts.env_files.split(' ')) {
+    if (fileName === void 0 || fileName === '') {
       continue
     }
     loadEnv(api.resolve.app(fileName), target, false)
@@ -54,7 +54,7 @@ module.exports = function (api) {
   // hard dependencies, as in a minimum version of the "quasar"
   // package or a minimum version of "@quasar/app" CLI
   api.compatibleWith('quasar', '^1.1.1')
-  api.compatibleWith('@quasar/app', '^1.1.0')
+  api.compatibleWith('@quasar/app', '^2.0.0')
 
 
   // We extend /quasar.conf.js
