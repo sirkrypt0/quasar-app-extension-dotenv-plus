@@ -1,6 +1,6 @@
 {
   "name": "quasar-app-extension-dotenv-plus",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A dotenv wrapper for Quasar apps",
   "author": "sirkrypt0",
   "license": "MIT",
